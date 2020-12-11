@@ -8,6 +8,7 @@ import com.microservice.thymeleaf.form.PersonForm;
         import com.microservice.thymeleaf.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
         import org.springframework.ui.Model;
@@ -35,7 +36,7 @@ public class MainController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/personList/{id}"}, method = RequestMethod.GET)
     public String person(Model model, @PathVariable("id") UUID id) {
         ResponseEntity<Person> response = restTemplate.getForEntity("http://localhost:8888/api/person/" + id.toString(), Person.class);
         Person person = response.getBody();
@@ -83,6 +84,38 @@ public class MainController {
 
         model.addAttribute("errorMessage", errorMessage);
         return "addPerson";
+    }
+
+    @RequestMapping(value = {"/delete/{id}"}, method = RequestMethod.GET)
+    public String delete(@PathVariable("id") UUID id) {
+        restTemplate.delete("http://localhost:8888/api/person/" + id.toString());
+        return "redirect:/personList";
+    }
+
+    @GetMapping(value = "/updateForm/{id}")
+    public String GetById(Model model, @PathVariable("id") UUID id) {
+        ResponseEntity<Person> response = restTemplate.getForEntity("http://localhost:8888/api/person/" + id.toString(), Person.class);
+        Person personToUpdate = response.getBody();
+        PersonForm personForm = new PersonForm();
+
+        model.addAttribute("personForm", personForm);
+        model.addAttribute("person", personToUpdate);
+        return "updateForm";
+    }
+
+    @PostMapping(value = "/update/{id}")
+    public String update(Model model, @ModelAttribute("personForm") PersonForm personForm, @PathVariable("id") UUID id) {
+        String name = personForm.getName();
+
+        if (name != null && name.length() > 0) {
+            Person newPerson = new Person(name, id);
+            HttpEntity<Person> request = new HttpEntity<>(newPerson);
+            restTemplate.put("http://localhost:8888/api/person", request, Person.class);
+
+            return "redirect:/personList";
+        }
+        model.addAttribute("errorMessage", errorMessage);
+        return "updateForm";
     }
 
 }

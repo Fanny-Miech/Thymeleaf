@@ -13,9 +13,10 @@
         <br/><br/>
         <span th:utext="${person.id}">...</span>
         <br/><br/>
-        <button type="button">Delete</button>
+        <a th:href="|/delete/${person.id}|">Delete</a>
+        <a th:href="|/updateForm/${person.id}|">Edit</a>
     </div>
     <br/><br/>
-    <a href="personList">Person List</a>
+    <a href="/personList">Person List</a>
 </body>
 </html>

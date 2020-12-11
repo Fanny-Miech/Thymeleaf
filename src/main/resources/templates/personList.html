@@ -16,7 +16,7 @@
             <th>Id</th>
         </tr>
         <tr th:each ="person : ${persons}">
-            <td><a th:href="|/${person.id}|" th:utext="${person.name}">...</a></td>
+            <td><a th:href="|/personList/${person.id}|" th:utext="${person.name}">...</a></td>
             <td th:utext="${person.id}">...</td>
 
         </tr>
