@@ -2,15 +2,18 @@ package com.microservice.thymeleaf.controller;
 
 import java.util.ArrayList;
         import java.util.List;
+import java.util.UUID;
 
-        import com.microservice.thymeleaf.form.PersonForm;
+import com.microservice.thymeleaf.form.PersonForm;
         import com.microservice.thymeleaf.model.Person;
-        import org.springframework.beans.factory.annotation.Value;
-        import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
         import org.springframework.ui.Model;
-        import org.springframework.web.bind.annotation.ModelAttribute;
-        import org.springframework.web.bind.annotation.RequestMapping;
-        import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 
 @Controller
 public class MainController {
@@ -22,12 +25,23 @@ public class MainController {
         persons.add(new Person("Steve"));
     }
 
-    // Injectez (inject) via application.properties.
+    // Injecte (inject) via application.properties.
     @Value("${welcome.message}")
     private String message;
 
     @Value("${error.message}")
     private String errorMessage;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET)
+    public String person(Model model, @PathVariable("id") UUID id) {
+        ResponseEntity<Person> response = restTemplate.getForEntity("http://localhost:8888/api/person/" + id.toString(), Person.class);
+        Person person = response.getBody();
+        model.addAttribute("person", person);
+        return "person";
+    }
 
     @RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
     public String index(Model model) {
@@ -37,6 +51,11 @@ public class MainController {
 
     @RequestMapping(value = { "/personList" }, method = RequestMethod.GET)
     public String personList(Model model) {
+        ResponseEntity<Person[]> response =
+                restTemplate.getForEntity(
+                        "http://localhost:8888/api/person/",
+                        Person[].class);
+        Person[] persons = response.getBody();
         model.addAttribute("persons", persons);
         return "personList";
     }
@@ -48,14 +67,17 @@ public class MainController {
         return "addPerson";
     }
 
-    @RequestMapping(value = { "/addPerson" }, method = RequestMethod.POST)
+    @PostMapping(value = { "/addPerson" })
     public String savePerson(Model model, //
                              @ModelAttribute("personForm") PersonForm personForm) {
         String name = personForm.getName();
 
         if (name != null && name.length() > 0) {
             Person newPerson = new Person(name);
-            persons.add(newPerson);
+            ResponseEntity<Person> response = restTemplate.postForEntity("http://localhost:8888/api/person/",
+                    newPerson,
+                    Person.class);
+            //persons.add(newPerson);
             return "redirect:/personList";
         }
 

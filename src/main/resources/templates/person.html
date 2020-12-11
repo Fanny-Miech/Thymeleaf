@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>person</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+    <h1>Person</h1>
+    <div>
+        <span th:utext="${person.name}">...</span>
+        <br/><br/>
+        <span th:utext="${person.id}">...</span>
+        <br/><br/>
+        <button type="button">Delete</button>
+    </div>
+    <br/><br/>
+    <a href="personList">Person List</a>
+</body>
+</html>

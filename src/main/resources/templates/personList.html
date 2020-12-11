@@ -13,9 +13,12 @@
     <table border="1">
         <tr>
             <th>Name</th>
+            <th>Id</th>
         </tr>
         <tr th:each ="person : ${persons}">
-            <td th:utext="${person.name}">...</td>
+            <td><a th:href="|/${person.id}|" th:utext="${person.name}">...</a></td>
+            <td th:utext="${person.id}">...</td>
+
         </tr>
     </table>
 </div>
