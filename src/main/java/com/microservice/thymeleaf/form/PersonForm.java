@@ -5,7 +5,7 @@ import java.util.UUID;
 public class PersonForm {
 
     private String name;
-    private UUID id;
+    private Integer id;
 
     public String getName() {
         return name;
@@ -15,5 +15,5 @@ public class PersonForm {
         this.name = name;
     }
 
-    public UUID getId() { return id; }
+    public Integer getId() { return id; }
 }

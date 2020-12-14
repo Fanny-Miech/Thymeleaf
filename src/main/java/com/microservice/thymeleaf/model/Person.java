@@ -5,7 +5,7 @@ import java.util.UUID;
 public class Person {
 
     private String name;
-    private UUID id;
+    private Integer id;
 
     public Person() {
 
@@ -13,10 +13,10 @@ public class Person {
 
     public Person(String name) {
         this.name = name;
-        this.id = UUID.randomUUID();
+        this.id = id;
     }
 
-    public Person(String name, UUID id) {
+    public Person(String name, Integer id) {
         this.name = name;
         this.id = id;
     }
@@ -29,7 +29,7 @@ public class Person {
         this.name = name;
     }
 
-    public UUID getId() { return id; }
+    public Integer getId() { return id; }
 
-    public void setId(UUID id) { this.id = id; }
+    public void setId(Integer id) { this.id = id; }
 }
